@@ -10,10 +10,10 @@ public final class MenuConstants {
     public static final String PROVIDE_INPUT = "Provide input:";
     public static final String PROGRAM_END = "Program end";
     public static final String NO_CONTINENT_AVAILABLE = "No Continent available, please add a continent first!";
+    public static final String NO_COUNTRY_AVAILABLE = "No Country available..";
     public static final String CHOOSE_CONTINENT_FOR_COUNTRY = "Choose Continent to add Country to:";
     public static final String PROVIDE_COUNTRY_NAME = "Provide Country name:";
     public static final String CHOOSE_COUNTRY = "Choose country";
     public static final String CHOOSE_CONTINENT = "Choose continent";
-    public static final String NO_COUNTRY_AVAILABLE = "No Country available..";
     public static final String INVALID_ID_INPUT = "Invalid ID input.";
 }

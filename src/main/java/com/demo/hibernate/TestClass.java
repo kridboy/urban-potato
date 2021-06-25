@@ -73,7 +73,11 @@ public class TestClass {
     private void countryMenu(int choice) {
         switch (choice) {
             case 1:
-                countryService.getAllCountries().forEach(System.out::println);
+                var countries = countryService.getAllCountries();
+                if (countries.isEmpty())
+                    System.err.println(NO_COUNTRY_AVAILABLE);
+                else
+                    countries.forEach(System.out::println);
                 break;
             case 2:
                 seeCountry();
@@ -99,7 +103,11 @@ public class TestClass {
 
     private void seeCountry() {
         int input = getNumberInput();
-        countryService.getCountryById(input);
+        var country = countryService.getCountryById(input);
+        if(country==null)
+            System.err.println(INVALID_ID_INPUT);
+        else
+            System.out.println(country);
     }
 
     private void addCountry() {
@@ -148,7 +156,11 @@ public class TestClass {
     private void continentMenu(int choice) {
         switch (choice) {
             case 1:
-                continentService.getAllContinents().forEach(System.out::println);
+                var continents = continentService.getAllContinents();
+                if (continents.isEmpty())
+                    System.err.println(NO_CONTINENT_AVAILABLE);
+                else
+                    continents.forEach(System.out::println);
                 break;
             case 2:
                 seeContinent();
@@ -174,7 +186,11 @@ public class TestClass {
 
     private void seeContinent() {
         int input = getNumberInput();
-        countryService.getCountryById(input);
+        var continent = continentService.getContinentById(input);
+        if (continent == null)
+            System.err.println(INVALID_ID_INPUT);
+        else
+            System.out.println(continent);
     }
 
     private void addContinent() {
