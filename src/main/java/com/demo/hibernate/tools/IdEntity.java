@@ -6,5 +6,6 @@ package com.demo.hibernate.tools;
 // and they're all we need for certain operations
 public interface IdEntity {
     int getId();
+
     String toString();
 }

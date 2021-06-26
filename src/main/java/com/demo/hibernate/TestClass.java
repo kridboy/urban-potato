@@ -1,3 +1,6 @@
+//When working with Maven, and Java 9+ in general it is advised to use correct package naming.
+//This gives classes a FQN (Fully Qualified Name) (can be anything but usually in the format of com.xxx.xxx.class)
+//This this reflects package structure (in this case package com.demo.hibernate.[subpackages].Class)
 package com.demo.hibernate;
 
 import com.demo.hibernate.model.City;
@@ -11,7 +14,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
-//Save all menu
 import static com.demo.hibernate.tools.MenuConstants.*;
 
 public class TestClass {

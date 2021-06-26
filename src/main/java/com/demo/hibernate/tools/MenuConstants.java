@@ -1,7 +1,8 @@
 package com.demo.hibernate.tools;
 
 public final class MenuConstants {
-    private MenuConstants(){}
+    private MenuConstants() {
+    }
 
     // Static references for all menu operations. promotes re-usability and cleanliness in main business logic
     // it also makes it easier to perform changes without having to apply them several times
