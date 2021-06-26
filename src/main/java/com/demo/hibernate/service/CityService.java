@@ -4,6 +4,7 @@ import com.demo.hibernate.model.City;
 
 import java.util.Set;
 
+//Service Classes should be defined with an interface that has basic methods which implementations will inherit
 public interface CityService {
     void addCity(City city);
 

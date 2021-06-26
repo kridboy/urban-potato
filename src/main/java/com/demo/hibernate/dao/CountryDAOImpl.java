@@ -5,7 +5,6 @@ import com.demo.hibernate.model.Country;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,11 +14,7 @@ public class CountryDAOImpl implements CountryDAO {
     private EntityManagerFactory emf;
 
     private CountryDAOImpl() {
-        try {
-            emf = EMFactory.getEMF();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        emf = EMFactory.getEMF();
     }
 
     public static CountryDAO getInstance() {
@@ -61,7 +56,7 @@ public class CountryDAOImpl implements CountryDAO {
     public void deleteCountry(Country country) {
         var em = getEntityManager();
         em.getTransaction().begin();
-        var c = em.find(Country.class,country.getId());
+        var c = em.find(Country.class, country.getId());
         em.remove(c);
         em.getTransaction().commit();
     }

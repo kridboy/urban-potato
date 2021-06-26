@@ -3,6 +3,8 @@ package com.demo.hibernate.tools;
 public final class MenuConstants {
     private MenuConstants(){}
 
+    // Static references for all menu operations. promotes re-usability and cleanliness in main business logic
+    // it also makes it easier to perform changes without having to apply them several times
     public static final String INVALID_INPUT = "input was invalid, please retry..";
     public static final String NAN_INVALID = "Input was not a number! try again.";
     public static final String MAIN_MENU = "What do you want to look at? \n1: Countries \n2: Continents\n3: Cities\n0: End";

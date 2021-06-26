@@ -5,7 +5,6 @@ import com.demo.hibernate.model.City;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,15 +13,12 @@ public class CityDAOImpl implements CityDAO {
     private final EntityManagerFactory emf;
 
     private CityDAOImpl() {
-        try{
-            emf = EMFactory.getEMF();
-        }catch (SQLException ex){
-            throw new RuntimeException(ex);
-        }
+        emf = EMFactory.getEMF();
     }
 
     public static CityDAO getInstance() {
-        //Singleton -> private constructor, so you can only get once instance
+        // Singleton -> With a private constructor and a single reference to a DAO implementation we force a singleton instance
+        // there can never be two or more separate DAO implementations
         if (cityDAO == null)
             cityDAO = new CityDAOImpl();
 
@@ -40,8 +36,8 @@ public class CityDAOImpl implements CityDAO {
 
     @Override
     public City getCityById(int id) {
-        var em= getEntityManager();
-        return em.find(City.class,id);
+        var em = getEntityManager();
+        return em.find(City.class, id);
     }
 
     @Override
@@ -63,7 +59,7 @@ public class CityDAOImpl implements CityDAO {
     public void deleteCity(City city) {
         var em = getEntityManager();
         em.getTransaction().begin();
-        var c = em.find(City.class,city.getId());
+        var c = em.find(City.class, city.getId());
         em.remove(c);
         em.getTransaction().commit();
     }

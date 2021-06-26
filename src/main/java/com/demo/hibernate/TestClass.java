@@ -11,17 +11,18 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
+//Save all menu
 import static com.demo.hibernate.tools.MenuConstants.*;
 
 public class TestClass {
-
-
     private final ContinentService continentService;
     private final CountryService countryService;
     private final CityService cityService;
+    //Use only 1 scanner for all input operations, make sure to close upon end of execution.
     private final Scanner scanner;
 
     public TestClass() {
+        //Instantiate service classes in constructor, not in method bodies
         this.continentService = new ContinentServiceImpl();
         this.countryService = new CountryServiceImpl();
         this.cityService = new CityServiceImpl();
@@ -33,6 +34,7 @@ public class TestClass {
         new TestClass().run();
     }
 
+    //Our main run method, where all business logic starts, and at end of runtime scanner gets closed.
     void run() {
         try {
             mainMenuLoop();
@@ -41,13 +43,16 @@ public class TestClass {
         }
     }
 
+
     void mainMenuLoop() {
+        // We can use while(true) since our ending condition is a System#exit(0) call, effectively ending the loop.
         while (true) {
             System.out.println(MAIN_MENU);
             System.out.println(PROVIDE_INPUT);
             int numberInput = getNumberInput();
 
             switch (numberInput) {
+                // Country, city, Continent can use same subMenu method, where further delegation is handled.
                 case 1:
                 case 2:
                 case 3:
@@ -65,6 +70,8 @@ public class TestClass {
     }
 
     private void subMenu(int choice) {
+        // Since submenu operations are the same for all entities we can ask the question first (no code duplication)
+        // using choice from previous input we can delegate calls to correct submenu along with next choice
         System.out.println(SUB_MENU);
         System.out.println(PROVIDE_INPUT);
         int numberInput = getNumberInput();
@@ -77,6 +84,9 @@ public class TestClass {
             cityMenu(numberInput);
     }
 
+
+    // I'm pretty sure we can abstract these submenus into one (instead of one for each entity)
+    // although it might require reflection which would become a little complicated.
     private void countryMenu(int choice) {
         switch (choice) {
             case 1:
@@ -111,6 +121,7 @@ public class TestClass {
     private void seeCountry() {
         int input = getNumberInput();
         var country = countryService.getCountryById(input);
+        // It's okay to not use brackets in single statement if-conditions, but be mindful when doing so.
         if (country == null)
             System.err.println(INVALID_ID_INPUT);
         else
@@ -124,6 +135,8 @@ public class TestClass {
         if (continents.isEmpty()) {
             System.err.println(NO_CONTINENT_AVAILABLE);
         } else {
+            // below is a nice example of how abstracting logic and nesting method calls can shorten code considerably!
+            // we need an ID based on a list of entities and it needs to be validated to be sure it's actually in the list.
             int idInput = validateIdInput(printEntityAndListIds(continents));
             c.setContinent(continentService.getContinentById(idInput));
             System.out.println(PROVIDE_COUNTRY_NAME);
@@ -137,6 +150,8 @@ public class TestClass {
         int idInput = getCountryId();
         var c = countryService.getCountryById(idInput);
         System.out.println(PROVIDE_COUNTRY_NAME);
+        // At the moment a bit of an unsafe call to #getInput(). I think a string like ""," " or "n" for example would be accepted
+        // but #getInput can be refactored to check for these types of input. It will then be applied to everywhere this method is called.
         c.setName(getInput());
         countryService.updateCountry(c);
 
@@ -147,6 +162,9 @@ public class TestClass {
         countryService.deleteCountry(countryService.getCountryById(idInput));
     }
 
+    // We know that we need to get a country ID in 2 methods, so instead of rewriting code we can extract it into a separate method
+    // for easy re-use and to simplify changes if they need to happen.
+    // (We use very similar for city and continent, so perhaps another layer of abstraction could be possible?)
     private int getCountryId() {
         System.out.println(CHOOSE_COUNTRY);
         var countries = countryService.getAllCountries();
@@ -155,6 +173,7 @@ public class TestClass {
             subMenu(1);
         }
 
+        // Returning nested method calls can shorten code considerably, but be careful not lose track of code-flow
         return validateIdInput(printEntityAndListIds(countries));
     }
 
@@ -300,6 +319,7 @@ public class TestClass {
         cityService.deleteCity(c);
     }
 
+
     private int getCityId() {
         System.out.println(CHOOSE_CITY);
         var cities = cityService.getAllCities();
@@ -310,6 +330,8 @@ public class TestClass {
         return validateIdInput(printEntityAndListIds(cities));
     }
 
+    // We need to validate Id's for several entities. By providing a List of valid Id's
+    // we can abstract validation away from specific entitiies
     int validateIdInput(List<Integer> idlist) {
         int input;
         while (true) {
@@ -321,8 +343,10 @@ public class TestClass {
         }
     }
 
+    // Knowing that each entity implements a toString and getId method we can use an interface and wildcard
+    // this abstracts the code in a way that we don't have to repeat same code for multiple entities just because
+    // they are not the exact same object.
     private List<Integer> printEntityAndListIds(Set<? extends IdEntity> entities) {
-        //just use generic wildcard with IdEntity interface, otherwise we're doing basically copying code several times
         var ids = new ArrayList<Integer>();
         entities.forEach(c -> {
             System.out.println(c);
@@ -331,6 +355,7 @@ public class TestClass {
         return ids;
     }
 
+    //We can use a simply Try-catch to assert number use, and recurse this method as long as needed until a valid input is given.
     private int getNumberInput() {
         try {
             return Integer.parseInt(getInput());
@@ -340,6 +365,8 @@ public class TestClass {
         }
     }
 
+    // Instead of making scanners for every user input we can just delegate all user input to a single method
+    //  this promotes code re-use and makes it easier to perform simple changes to logic
     String getInput() {
         try {
             //A REGEX and/or length check could be added to ensure correct input, and if input not correct recurse

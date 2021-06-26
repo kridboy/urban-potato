@@ -5,7 +5,6 @@ import com.demo.hibernate.model.Continent;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,11 +13,7 @@ public class ContinentDAOImpl implements ContinentDAO {
     private EntityManagerFactory emf;
 
     private ContinentDAOImpl() {
-        try{
-            emf = EMFactory.getEMF();
-        }catch (SQLException ex){
-            throw new RuntimeException(ex);
-        }
+        emf = EMFactory.getEMF();
     }
 
     public static ContinentDAO getInstance() {
@@ -38,13 +33,12 @@ public class ContinentDAOImpl implements ContinentDAO {
     @Override
     public Continent getContinentById(int id) {
         var em = getEntityManager();
-        return em.find(Continent.class,id);
+        return em.find(Continent.class, id);
     }
 
 
     @Override
-    public Set<Continent> getAllContinents()
-    {
+    public Set<Continent> getAllContinents() {
         var em = getEntityManager();
         var query = em.createQuery("from Continent c");
         return new HashSet<>(query.getResultList());
@@ -62,7 +56,7 @@ public class ContinentDAOImpl implements ContinentDAO {
     public void deleteContinent(Continent continent) {
         var em = getEntityManager();
         em.getTransaction().begin();
-        var c = em.find(Continent.class,continent.getId());
+        var c = em.find(Continent.class, continent.getId());
         em.remove(c);
         em.getTransaction().commit();
     }

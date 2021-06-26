@@ -12,7 +12,7 @@ public class Continent implements IdEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String name;
-    @OneToMany(mappedBy = "continent",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "continent", cascade = CascadeType.REMOVE)
     private List<Country> countryList;
 
     public Continent() {

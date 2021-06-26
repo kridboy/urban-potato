@@ -6,6 +6,9 @@ import com.demo.hibernate.model.City;
 
 import java.util.Set;
 
+// Service classes should never perform business logic,
+// they should only be concerned with storing and retrieving data from DAO classes
+// they serve as an intermediate layer between data and front-end logic.
 public class CityServiceImpl implements CityService {
     private final CityDAO cityDAO;
 
