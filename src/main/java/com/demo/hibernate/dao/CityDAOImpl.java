@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class CityDAOImpl implements CityDAO {
     private static CityDAO cityDAO;
-    private EntityManagerFactory emf;
+    private final EntityManagerFactory emf;
 
     private CityDAOImpl() {
         try{

@@ -1,9 +1,11 @@
 package com.demo.hibernate.model;
 
+import com.demo.hibernate.tools.IdEntity;
+
 import javax.persistence.*;
 
 @Entity
-public class City {
+public class City implements IdEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

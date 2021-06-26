@@ -1,15 +1,17 @@
 package com.demo.hibernate;
 
+import com.demo.hibernate.model.City;
 import com.demo.hibernate.model.Continent;
 import com.demo.hibernate.model.Country;
 import com.demo.hibernate.service.*;
+import com.demo.hibernate.tools.IdEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
-import static com.demo.hibernate.MenuConstants.*;
+import static com.demo.hibernate.tools.MenuConstants.*;
 
 public class TestClass {
 
@@ -42,11 +44,13 @@ public class TestClass {
     void mainMenuLoop() {
         while (true) {
             System.out.println(MAIN_MENU);
+            System.out.println(PROVIDE_INPUT);
             int numberInput = getNumberInput();
 
             switch (numberInput) {
                 case 1:
                 case 2:
+                case 3:
                     subMenu(numberInput);
                     break;
                 case 0:
@@ -62,12 +66,15 @@ public class TestClass {
 
     private void subMenu(int choice) {
         System.out.println(SUB_MENU);
+        System.out.println(PROVIDE_INPUT);
         int numberInput = getNumberInput();
 
         if (choice == 1)
             countryMenu(numberInput);
-        else
+        else if (choice == 2)
             continentMenu(numberInput);
+        else
+            cityMenu(numberInput);
     }
 
     private void countryMenu(int choice) {
@@ -104,7 +111,7 @@ public class TestClass {
     private void seeCountry() {
         int input = getNumberInput();
         var country = countryService.getCountryById(input);
-        if(country==null)
+        if (country == null)
             System.err.println(INVALID_ID_INPUT);
         else
             System.out.println(country);
@@ -117,7 +124,7 @@ public class TestClass {
         if (continents.isEmpty()) {
             System.err.println(NO_CONTINENT_AVAILABLE);
         } else {
-            int idInput = validateIdInput(printContinentsGetIds(continents));
+            int idInput = validateIdInput(printEntityAndListIds(continents));
             c.setContinent(continentService.getContinentById(idInput));
             System.out.println(PROVIDE_COUNTRY_NAME);
             c.setName(getInput());
@@ -127,21 +134,20 @@ public class TestClass {
 
 
     private void editCountry() {
-        System.out.println(CHOOSE_COUNTRY);
-        var countries = countryService.getAllCountries();
-        if (countries.isEmpty()) {
-            System.err.println(NO_COUNTRY_AVAILABLE);
-            subMenu(1);
-        }
-
-        int idInput = validateIdInput(printCountriesGetIds(countries));
+        int idInput = getCountryId();
         var c = countryService.getCountryById(idInput);
+        System.out.println(PROVIDE_COUNTRY_NAME);
         c.setName(getInput());
         countryService.updateCountry(c);
 
     }
 
     private void deleteCountry() {
+        int idInput = getCountryId();
+        countryService.deleteCountry(countryService.getCountryById(idInput));
+    }
+
+    private int getCountryId() {
         System.out.println(CHOOSE_COUNTRY);
         var countries = countryService.getAllCountries();
         if (countries.isEmpty()) {
@@ -149,8 +155,7 @@ public class TestClass {
             subMenu(1);
         }
 
-        int idInput = validateIdInput(printCountriesGetIds(countries));
-        countryService.deleteCountry(countryService.getCountryById(idInput));
+        return validateIdInput(printEntityAndListIds(countries));
     }
 
     private void continentMenu(int choice) {
@@ -195,35 +200,114 @@ public class TestClass {
 
     private void addContinent() {
         Continent c = new Continent();
-        System.out.println(PROVIDE_COUNTRY_NAME);
+        System.out.println(PROVIDE_CONTINENT_NAME);
         c.setName(getInput());
         continentService.addContinent(c);
     }
 
     private void editContinent() {
+        int idInput = getContinentId();
+        var c = continentService.getContinentById(idInput);
+        System.out.println(PROVIDE_CONTINENT_NAME);
+        c.setName(getInput());
+        continentService.updateContinent(c);
+    }
+
+    private void deleteContinent() {
+        int idInput = getContinentId();
+        var c = continentService.getContinentById(idInput);
+        continentService.deleteContinent(c);
+    }
+
+    private int getContinentId() {
         System.out.println(CHOOSE_CONTINENT);
         var continents = continentService.getAllContinents();
         if (continents.isEmpty()) {
             System.err.println(NO_COUNTRY_AVAILABLE);
             subMenu(2);
         }
-        int idInput = validateIdInput(printContinentsGetIds(continents));
-
-        var c = continentService.getContinentById(idInput);
-        c.setName(getInput());
-        continentService.updateContinent(c);
+        return validateIdInput(printEntityAndListIds(continents));
     }
 
-    private void deleteContinent() {
-        System.out.println(CHOOSE_CONTINENT);
-        var continents = continentService.getAllContinents();
-        if (continents.isEmpty()) {
-            System.err.println(NO_CONTINENT_AVAILABLE);
-            subMenu(2);
+    private void cityMenu(int choice) {
+        switch (choice) {
+            case 1:
+                var cities = cityService.getAllCities();
+                if (cities.isEmpty())
+                    System.err.println(NO_CITY_AVAILABLE);
+                else
+                    cities.forEach(System.out::println);
+                break;
+            case 2:
+                seeCity();
+                break;
+            case 3:
+                addCity();
+                break;
+            case 4:
+                editCity();
+                break;
+            case 5:
+                deleteCity();
+                break;
+            case 0:
+                mainMenuLoop();
+                break;
+            default:
+                System.err.println(INVALID_INPUT);
+                break;
         }
-        int idInput = validateIdInput(printContinentsGetIds(continents));
-        var c = continentService.getContinentById(idInput);
-        continentService.deleteContinent(c);
+        subMenu(3);
+    }
+
+
+    private void seeCity() {
+        int input = getNumberInput();
+        var city = cityService.getCityById(input);
+        if (city == null)
+            System.err.println(INVALID_ID_INPUT);
+        else
+            System.out.println(city);
+    }
+
+
+    private void addCity() {
+        var c = new City();
+        System.out.println(CHOOSE_COUNTRY_FOR_CITY);
+        Set<Country> countries = countryService.getAllCountries();
+        if (countries.isEmpty()) {
+            System.err.println(NO_COUNTRY_AVAILABLE);
+        } else {
+            int idInput = validateIdInput(printEntityAndListIds(countries));
+            c.setCountry(countryService.getCountryById(idInput));
+            System.out.println(PROVIDE_CITY_NAME);
+            c.setName(getInput());
+            cityService.addCity(c);
+        }
+    }
+
+    private void editCity() {
+        int idInput = getCityId();
+        var c = cityService.getCityById(idInput);
+        System.out.println(PROVIDE_CITY_NAME);
+        c.setName(getInput());
+        cityService.updateCity(c);
+    }
+
+    private void deleteCity() {
+        int idInput = getCityId();
+        var c = cityService.getCityById(idInput);
+        cityService.deleteCity(c);
+    }
+
+    private int getCityId() {
+        System.out.println(CHOOSE_CITY);
+        var cities = cityService.getAllCities();
+        if (cities.isEmpty()) {
+            System.err.println(NO_CITY_AVAILABLE);
+            subMenu(3);
+        }
+        return validateIdInput(printEntityAndListIds(cities));
     }
 
     int validateIdInput(List<Integer> idlist) {
@@ -237,18 +321,10 @@ public class TestClass {
         }
     }
 
-    private List<Integer> printContinentsGetIds(Set<Continent> continents) {
+    private List<Integer> printEntityAndListIds(Set<? extends IdEntity> entities) {
+        //just use generic wildcard with IdEntity interface, otherwise we're doing basically copying code several times
         var ids = new ArrayList<Integer>();
-        continents.forEach(c -> {
-            System.out.println(c);
-            ids.add(c.getId());
-        });
-        return ids;
-    }
-
-    private List<Integer> printCountriesGetIds(Set<Country> countries) {
-        var ids = new ArrayList<Integer>();
-        countries.forEach(c -> {
+        entities.forEach(c -> {
             System.out.println(c);
             ids.add(c.getId());
         });
@@ -266,9 +342,9 @@ public class TestClass {
 
     String getInput() {
         try {
-            System.out.println(PROVIDE_INPUT);
-            String str = scanner.nextLine();
-            return str;
+            //A REGEX and/or length check could be added to ensure correct input, and if input not correct recurse
+            return scanner.nextLine();
+
         } catch (Exception ex) {
             ex.printStackTrace();
             System.err.println(INVALID_INPUT);

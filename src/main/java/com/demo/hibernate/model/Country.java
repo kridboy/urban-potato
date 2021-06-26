@@ -1,10 +1,12 @@
 package com.demo.hibernate.model;
 
+import com.demo.hibernate.tools.IdEntity;
+
 import javax.persistence.*;
 import java.util.List;
 
     @Entity
-    public class Country {
+    public class Country implements IdEntity {
 
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
